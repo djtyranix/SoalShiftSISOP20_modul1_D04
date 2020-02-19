@@ -22,11 +22,14 @@ Kode diatas berfungsi untuk melakukan randomisasi string. "tr" digunakan untuk m
 
 Setelah script soal2.sh selesai dilakukan, pengguna akan melakukan "enkripsi" dari nama file yang telah dibuat sebelumnya. Hal ini akan dilakukan oleh script kedua, yaitu [soal2_encrypt.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal2_encrypt.sh).
 
-## Dalam file tersebut, ada beberapa algoritma yang digunakan untuk mencari string enkripsi dari nama file berdasarkan Vigenère Cipher.
+## Dalam file tersebut, ada 2 algoritma utama yang digunakan untuk mencari string enkripsi dari nama file berdasarkan Vigenère Cipher.
 
 * Algoritma mencari shift
   Algoritmanya cukup simpel dan straightforward. Dari soal, dapat langsung terlihat bahwa shift ditentukan oleh jam kapan script enkripsi tersebut dijalankan. Berarti, jika jam saat script dijalankan adalah jam 7 malam (secara 24-h clock format), maka shiftnya adalah 19, dan seperti itu seterusnya. Kasus special case terjadi pada jam 12 malam, atau dalam 24-h format adalah 00:00. Jika langsung dimasukkan ke dalam shift, maka tidak akan ada yang berubah dalam nama file karena shiftnya 0. Dalam file ini, pada jam 00:00 sampai 00:59, akan dihitung dengan shift = 24, dengan fakta bahwa 24:00 adalah 00:00.
 * Algoritma melakukan cipher
   Untuk melakukan cipher, dibutuhkan adanya variabel yang akan menampung string per karakter setiap kali dilakukan loop sepanjang suatu string. Variabel yang digunakan dalam script ini adalah temp yang berada di dalam perintah for. Untuk penambahan karakter oleh shift yang sudah ditentukan, karakter akan terlebih dahulu di ubah ke bentuk ASCII Code desimal. Kemudian, kode ASCII ini akan ditambah oleh shift yang sudah ditentukan, tetapi untuk beberapa kasus akan muncul karakter yang tidak diinginkan karena range ASCII untuk karakter huruf terbatas. Oleh karena itu, dalam script tersebut memiliki fungsi if dalam for yang digunakan untuk memisahkan karakter lowercase uppercase dan pembatasan karakter huruf di dalamnya. Setelah didapat angka ASCII Code yang baru, lalu akan disimpan ke dalam suatu variabel (dalam script ini adalah newchar). Sebelum disimpan, angka ASCII ini akan dirubah terlebih dahulu ke dalam bentuk huruf kembali.
+
+## Melakukan dekripsi nama file
+
 
 ## 3. Soal Nomor 3
