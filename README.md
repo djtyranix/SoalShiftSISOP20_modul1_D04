@@ -11,7 +11,20 @@ Link ke file yang dibuat:
 * [soal2_encrypt.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal2_encrypt.sh) - Script Enkripsi
 * [soal2_decrypt.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal2_decrypt.sh) - Script Dekripsi
 
-
+Detail penjalanan script:
+* soal2.sh
+  ```
+  ./soal2.sh <namafile>.txt
+  ```
+* soal2_encrypt.sh
+  ```
+  ./soal2_encrypt <namafile>.txt
+  ```
+* soal2_decrypt.sh
+  ```
+  ./soal2_decrypt <namafile_terenkripsi>.txt
+  ```
+## Penjelasan Penyelesaian
 Pada soal ini, goal dari soal adalah untuk membuat 2 script. 1 Script digunakan untuk membuat file bernama sesuai dengan argument yang diinput saat menjalankan script, dan script yang lain digunakan untuk melakukan "enkripsi" nama file sesuai dengan algoritma Vigenère Cipher (yang pada dasarnya adalah caesar cipher yang memiliki "custom shift").
 
 Dalam script [soal2.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal2.sh), untuk membuat suatu random alphanumeric string akan digunakan dev/urandom. File ini digunakan dengan command "cat". Fungsi "Cat" atau concatenate adalah sebuah fungsi yang digunakan untuk melakukan manipulasi file.
