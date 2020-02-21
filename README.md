@@ -19,6 +19,10 @@ laporan tersebut.
 *Gunakan Awk dan Command pendukung
 
 ## JAWABAN
+
+Link ke file yang dibuat:
+* [soal1.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal1/soal1.sh) - Script pertama
+
 ```
 echo -e "\n1.a)"
 echo -e "Region dengan profit paling sedikit:"
