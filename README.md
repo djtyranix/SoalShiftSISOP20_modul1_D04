@@ -1,11 +1,94 @@
 # Laporan Penjelasan dan Penyelesaian Praktikum Sistem Operasi 2020
 ## Kelompok D04
 1. Michael Ricky (05111840000078)
-2. Yaniar (NRP)
+2. Yaniar Pradityas Effendi (05111840000047)
 
 # Penjelasan dan Penyelesaian Soal Praktikum
 ## 1. Soal Nomor 1
+Whits adalah seorang mahasiswa teknik informatika. Dia mendapatkan tugas praktikum
+untuk membuat laporan berdasarkan data yang ada pada file “Sample-Superstore.tsv”.
+Namun dia tidak dapat menyelesaikan tugas tersebut. Laporan yang diminta berupa :
+a. Tentukan wilayah bagian (region) mana yang memiliki keuntungan (profit) paling
+sedikit
+b. Tampilkan 2 negara bagian (state) yang memiliki keuntungan (profit) paling
+sedikit berdasarkan hasil poin a
+c. Tampilkan 10 produk (product name) yang memiliki keuntungan (profit) paling
+sedikit berdasarkan 2 negara bagian (state) hasil poin b
+Whits memohon kepada kalian yang sudah jago mengolah data untuk mengerjakan
+laporan tersebut.
+*Gunakan Awk dan Command pendukung
+
+## JAWABAN
+```
+echo -e "\n1.a)"
+echo -e "Region dengan profit paling sedikit:"
+awk -F '[\t:]' 'FNR==1 {next}{a[$13]+=$21;min=a[$13]}END{for(i in a){if(min>a[i]){min=a[i];r=i}}print r}' Sample-Superstore.tsv
+```
+```
+echo -e "\n1.b)"
+echo -e "2 State dengan profit paling sedikit:"
+awk -F '[\t:]' '{if($13 == "Central")a[$11]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk '(NR<=2) {print $2}'
+```
+```
+echo -e "\n1.c)"
+echo -e "10 produk yang memiliki profit paling sedikit pada State hasil poin b:"
+echo -e "\nTexas:"
+awk -F '[\t:]' '{if($11 == "Texas" ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk 'NR<=10 {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
+echo -e "\nIllinois:"
+awk -F '[\t:]' '{if($11 == "Illinois" ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk 'NR<=10 {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
+```
+
+## PENJELASAN
+
+```
+awk -F '[\t:]' 'FNR==1 {next}{a[$13]+=$21;min=a[$13]}END{for(i in a){if(min>a[i]){min=a[i];r=i}}print r}' Sample-Superstore.tsv
+```
+
+-F '[\t:]' untuk separator memisahkan tab  antar kolom. FNR==1 {next} untuk tidak menghiraukan baris pertama yaitu judul kolom. Array dengan key arg ke-13 diisi sum arg ke-21. Pada eof, lakukan for loop untuk mencari nilai terkecil pada array kemudian print hasil sum profit yang paling rendah dari region.
+
+```awk -F '[\t:]' '{if($13 == "Central")a[$11]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk '(NR<=2) {print $2}'```
+
+
+-F '[\t:]' untuk separator memisahkan tab  antar kolom. Jika kolom ke-13 bernilai "Central", lalu array dengan key arg ke-11 diisi sum arg ke-21. Pada eof, lakukan for loop dalam array dan print isi array ke-"i" dan i. Lalu sorting secara numerik terhadap kolom nilai array[i] “-gk1”. Kemudian print state mana yang profitnya terendah, batasi hanya 2 state saja.
+
+```
+echo -e "\nTexas:"
+awk -F '[\t:]' '{if($11 == "Texas" ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk 'NR<=10 {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
+echo -e "\nIllinois:"
+awk -F '[\t:]' '{if($11 == "Illinois" ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk 'NR<=10 {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
+```
+
+State Texas:
+-F '[\t:]' untuk separator  memisahkan tab  antar kolom. Jika kolom ke-11 bernilai "Texas", lalu array dengan key arg ke-17 diisi sum arg ke-21. Pada eof, lakukan for loop dalam array dan print isi array ke-"i" dan i. Lalu sorting secara numerik terhadap kolom nilai array[i] “-gk1”. Kemudian print string nama produk yang memiliki profit paling rendah, batasi hanya 10 produk yang ditampilkan.
+
+State Illinois:
+-F '[\t:]' untuk separator  memisahkan tab  antar kolom. Jika kolom ke-11 bernilai "Illinois", lalu array dengan key arg ke-17 diisi sum arg ke-21. Pada eof, lakukan for loop dalam array dan print isi array ke-"i" dan i. Lalu sorting secara numerik terhadap kolom nilai array[i] “-gk1”. Kemudian print string nama produk yang memiliki profit paling rendah, batasi hanya 10 produk yang ditampilkan.
+
+Untuk menjalankan awk, ketik command bash soal1.sh
+
 ## 2. Soal Nomor 2
+Pada suatu siang, laptop Randolf dan Afairuzr dibajak oleh seseorang dan kehilangan
+data-data penting. Untuk mencegah kejadian yang sama terulang kembali mereka
+meminta bantuan kepada Whits karena dia adalah seorang yang punya banyak ide.
+Whits memikirkan sebuah ide namun dia meminta bantuan kalian kembali agar ide
+tersebut cepat diselesaikan. Idenya adalah kalian (a) membuat sebuah script bash yang
+dapat menghasilkan password secara acak sebanyak 28 karakter yang terdapat huruf
+besar, huruf kecil, dan angka. (b) Password acak tersebut disimpan pada file berekstensi
+.txt dengan nama berdasarkan argumen yang diinputkan dan HANYA berupa alphabet.
+(c) Kemudian supaya file .txt tersebut tidak mudah diketahui maka nama filenya akan di
+enkripsi dengan menggunakan konversi huruf (string manipulation) yang disesuaikan
+dengan jam(0-23) dibuatnya file tersebut dengan program terpisah dengan (misal:
+password.txt dibuat pada jam 01.28 maka namanya berubah menjadi qbttxpse.txt
+dengan perintah ‘bash soal2_enkripsi.sh password.txt’. Karena p adalah huruf ke 16 dan
+file dibuat pada jam 1 maka 16+1=17 dan huruf ke 17 adalah q dan begitu pula
+seterusnya. Apabila melebihi z, akan kembali ke a, contoh: huruf w dengan jam 5.28,
+maka akan menjadi huruf b.) dan (d) jangan lupa untuk membuat dekripsinya supaya
+nama file bisa kembali.
+HINT: enkripsi yang digunakan adalah caesar cipher.
+*Gunakan Bash Script
+
+## JAWABAN
+
 Link ke file yang dibuat:
 * [soal2.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal2/soal2.sh) - Script pertama
 * [soal2_encrypt.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal2/soal2_encrypt.sh) - Script Enkripsi
