@@ -144,7 +144,6 @@ itu, kalian mencoba membuat script untuk mendownload 28 gambar dari
 dengan nama "pdkt_kusuma_NO" (contoh: pdkt_kusuma_1, pdkt_kusuma_2,
 pdkt_kusuma_3) serta jangan lupa untuk menyimpan log messages wget kedalam
 sebuah file "wget.log". Karena kalian gak suka ribet, kalian membuat penjadwalan untuk
-
 menjalankan script download gambar tersebut. Namun, script download tersebut hanya
 berjalan[b] setiap 8 jam dimulai dari jam 6.05 setiap hari kecuali hari Sabtu Karena
 gambar yang didownload dari link tersebut bersifat random, maka ada kemungkinan
