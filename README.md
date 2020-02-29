@@ -190,7 +190,7 @@ merupakan hasil dari grep "Location".
 ## JAWABAN
 
 Link ke file yang dibuat:
-* [soal3_wgetloop.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal3/soalprak3_wgetloop.sh) - Script pertama
+* [revisi3.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal3/revisi3.sh) - Script pertama
 ```
 #!/bin/bash
 rm -f wget.log
@@ -216,7 +216,7 @@ do
 done
 ```
 
-PENJELASAN
+## PENJELASAN
 3.a)
 ```
 dir=`pwd`
