@@ -24,49 +24,70 @@ Link ke file yang dibuat:
 * [soal1.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal1/soal1.sh) - Script pertama
 
 ```
+#!/bin/bash
+
 echo -e "\n1.a)"
 echo -e "Region dengan profit paling sedikit:"
-awk -F '[\t:]' 'FNR==1 {next}{a[$13]+=$21;min=a[$13]}END{for(i in a){if(min>a[i]){min=a[i];r=i}}print r}' Sample-Superstore.tsv
-```
-```
+region=$(awk -F '[\t:]' 'FNR==1 {next}{a[$13]+=$21;min=a[$13]}END{for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -g -k 1 | awk '(NR==1) {print $2}')
+echo $region
+
 echo -e "\n1.b)"
 echo -e "2 State dengan profit paling sedikit:"
-awk -F '[\t:]' '{if($13 == "Central")a[$11]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk '(NR<=2) {print $2}'
-```
-```
+awk -F '[\t:]' -v region="$region" '{if($13 == region )a[$11]+=$21} END {for(i in a) print a[i]"="i}' Sample-Superstore.tsv | sort -g -k 1 > state.txt
+awk -F '=' '{print $2}' state.txt | head -2
+
 echo -e "\n1.c)"
-echo -e "10 produk yang memiliki profit paling sedikit pada State hasil poin b:"
-echo -e "\nTexas:"
-awk -F '[\t:]' '{if($11 == "Texas" ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk 'NR<=10 {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
-echo -e "\nIllinois:"
-awk -F '[\t:]' '{if($11 == "Illinois" ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk 'NR<=10 {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
+echo -e "10 produk yang memiliki profit paling sedikit:"
+state1=`awk -F '=' '(NR==1){print $2}' state.txt`
+state2=`awk -F '=' '(NR==2){print $2}' state.txt`
+echo -e "\n$state1:"
+awk -F '[\t:]' -v state1="$state1" '{if($11 == state1 ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -g -k 1 | awk '(NR<=10){for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
+echo -e "\n$state2:"
+awk -F '[\t:]' -v state2="$state2" '{if($11 == state2 ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -g -k 1 | awk '(NR<=10) {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
 ```
 
 ## PENJELASAN
-
 ```
-awk -F '[\t:]' 'FNR==1 {next}{a[$13]+=$21;min=a[$13]}END{for(i in a){if(min>a[i]){min=a[i];r=i}}print r}' Sample-Superstore.tsv
-```
-
--F '[\t:]' untuk separator memisahkan tab  antar kolom. FNR==1 {next} untuk tidak menghiraukan baris pertama yaitu judul kolom. Array dengan key arg ke-13 diisi sum arg ke-21. Pada eof, lakukan for loop untuk mencari nilai terkecil pada array kemudian print hasil sum profit yang paling rendah dari region.
-
-```awk -F '[\t:]' '{if($13 == "Central")a[$11]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk '(NR<=2) {print $2}'```
-
-
--F '[\t:]' untuk separator memisahkan tab  antar kolom. Jika kolom ke-13 bernilai "Central", lalu array dengan key arg ke-11 diisi sum arg ke-21. Pada eof, lakukan for loop dalam array dan print isi array ke-"i" dan i. Lalu sorting secara numerik terhadap kolom nilai array[i] “-gk1”. Kemudian print state mana yang profitnya terendah, batasi hanya 2 state saja.
-
-```
-echo -e "\nTexas:"
-awk -F '[\t:]' '{if($11 == "Texas" ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk 'NR<=10 {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
-echo -e "\nIllinois:"
-awk -F '[\t:]' '{if($11 == "Illinois" ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -gk1 | awk 'NR<=10 {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
+echo -e "\n1.a)"
+echo -e "Region dengan profit paling sedikit:"
+region=$(awk -F '[\t:]' 'FNR==1 {next}{a[$13]+=$21;min=a[$13]}END{for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -g -k 1 | awk '(NR==1) {print $2}')
+echo $region
 ```
 
-State Texas:
--F '[\t:]' untuk separator  memisahkan tab  antar kolom. Jika kolom ke-11 bernilai "Texas", lalu array dengan key arg ke-17 diisi sum arg ke-21. Pada eof, lakukan for loop dalam array dan print isi array ke-"i" dan i. Lalu sorting secara numerik terhadap kolom nilai array[i] “-gk1”. Kemudian print string nama produk yang memiliki profit paling rendah, batasi hanya 10 produk yang ditampilkan.
+-F '[\t:]' untuk separator memisahkan tab  antar kolom. FNR==1 {next} untuk tidak menghiraukan baris pertama yaitu judul kolom. Array dengan key arg ke-13 diisi sum arg ke-21. Pada eof, lakukan isi masing-masing array dan indeksnya. Kemudian di sort -g -k 1 yaitu sorting menurut general arithmetic (ascending) menurut kolom 1 yaitu profit. Kemudian diambil NR==1 untuk nilai profit terkecil dan di print nama regionnya. Hasil print disimpan di variabel region. Dan echo $region untuk display isi variabel region yang merupakan region dengan profit paling sedikit.
 
-State Illinois:
--F '[\t:]' untuk separator  memisahkan tab  antar kolom. Jika kolom ke-11 bernilai "Illinois", lalu array dengan key arg ke-17 diisi sum arg ke-21. Pada eof, lakukan for loop dalam array dan print isi array ke-"i" dan i. Lalu sorting secara numerik terhadap kolom nilai array[i] “-gk1”. Kemudian print string nama produk yang memiliki profit paling rendah, batasi hanya 10 produk yang ditampilkan.
+```
+echo -e "\n1.b)"
+echo -e "2 State dengan profit paling sedikit:"
+awk -F '[\t:]' -v region="$region" '{if($13 == region )a[$11]+=$21} END {for(i in a) print a[i]"="i}' Sample-Superstore.tsv | sort -g -k 1 > state.txt
+awk -F '=' '{print $2}' state.txt | head -2
+```
+
+-F '[\t:]' untuk separator memisahkan tab  antar kolom. Menggunakan -v untuk memakai variabel region ke AWK. Jika kolom ke-13 bernilai sama denga nisi variabel region, lalu array dengan key arg ke-11 diisi sum arg ke-21. Pada eof, lakukan for loop dalam array dan print isi array ke-"i", separator “=”, kemudian indeks “I”. Disorting -g -k 1 yaitu secara general arithmetic (ascending) terhadap kolom 1 yaitu nilai array[i]. Kemudian hasil disimpan ke file bernama “state.txt”. Kemudian untuk mencetak 2 state dengan profit terendah, print kolom 2 pada file “state.txt” yaitu nama state-nya dan digunakan head -2 untuk mengambil hanya 2 nilai saja.
+
+```
+echo -e "\n1.c)"
+echo -e "10 produk yang memiliki profit paling sedikit:"
+state1=`awk -F '=' '(NR==1){print $2}' state.txt`
+state2=`awk -F '=' '(NR==2){print $2}' state.txt`
+```
+
+Passing nilai baris 1 dari file “state.txt” yang merupakan hasil dari 1b sebagai state1 agar kemudian digunakan di nomor 1c.
+Serta passing nilai baris 2 dari file yang sama sebagai state2 agar kemudian bisa digunakan di nomor 1c.
+
+```
+echo -e "\n$state1:"
+awk -F '[\t:]' -v state1="$state1" '{if($11 == state1 ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -g -k 1 | awk '(NR<=10){for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
+```
+
+-F '[\t:]' untuk separator  memisahkan tab  antar kolom. Menggunakan -v untuk memakai variabel state1 ke AWK. Jika kolom ke-11 bernilai sama dengan isi variabel state1, lalu array dengan key arg ke-17 diisi sum arg ke-21. Pada eof, lakukan for loop dalam array a dan print isi array dengan indeks ke-"i" dan indeks “I”-nya. Lalu disorting -g -k 1 yaitu secara general arithmetic (ascending) terhadap kolom nilai array[i] yaitu nilai profit. Kemudian print string nama produk yang memiliki profit paling rendah, batasi hanya 10 produk yang ditampilkan (NR<=10).
+
+```
+echo -e "\n$state2:"
+awk -F '[\t:]' -v state2="$state2" '{if($11 == state2 ) a[$17]+=$21} END {for(i in a) print a[i],i}' Sample-Superstore.tsv | sort -g -k 1 | awk '(NR<=10) {for(i=2;i<NF;i++) printf "%s", $i OFS; printf "%s", $NF ORS}'
+```
+
+Mirip dengan state1. Pertama, -F '[\t:]' untuk separator  memisahkan tab  antar kolom. Menggunakan -v untuk memakai variabel state2 ke AWK. Jika kolom ke-11 bernilai sama dengan isi variabel state1, lalu array dengan key arg ke-17 diisi sum arg ke-21. Pada eof, lakukan for loop dalam array a dan print isi array dengan indeks ke-"i" dan indeks “I”-nya. Lalu disorting -g -k 1 yaitu secara general arithmetic (ascending) terhadap kolom nilai array[i] yaitu nilai profit. Kemudian print string nama produk yang memiliki profit paling rendah, batasi hanya 10 produk yang ditampilkan (NR<=10).
 
 Untuk menjalankan awk, ketik command bash soal1.sh
 
@@ -170,7 +191,73 @@ merupakan hasil dari grep "Location".
 
 Link ke file yang dibuat:
 * [soal3_wgetloop.sh](https://github.com/djtyranix/SoalShiftSISOP20_modul1_D04/blob/master/soal3/soalprak3_wgetloop.sh) - Script pertama
+```
+#!/bin/bash
+rm -f wget.log
+dir=`pwd`
 
-## Untuk soal nomor 3, Jawaban Belum Selesai.
+for i in $(seq 1 28)
+do
+        wget -O $dir/downloads/pdkt_kusuma_$i -a $dir/wget.log https://loremflickr.com/320/240/cat
+        echo -e $i
+done
+grep "Location" $dir/wget.log > location.log
+cat wget.log >> wget.log.bak
 
-Script yang terupload hanya script looping wget untuk mendownload file dari link yang tersedia.
+arrdup=($(awk 'BEGIN { FS="[/ ]" } a[$5]++  { print NR }' location.log))
+len=${#arrdup[@]}
+for ((i=0; i<$len; i=i+1))
+do
+  mv -f $dir/downloads/pdkt_kusuma_${arrdup[i]} $dir/duplicate/duplicate_$i
+done
+for j in $(ls $dir/downloads)
+do
+  mv $dir/downloads/$j $dir/kenangan/kenangan_$((k++))
+done
+```
+
+PENJELASAN
+3.a)
+```
+dir=`pwd`
+
+for i in $(seq 1 28)
+do
+        wget -O $dir/downloads/pdkt_kusuma_$i -a $dir/wget.log https://loremflickr.com/320/240/cat
+        echo -e $i
+done
+```
+Untuk mendownload 28 gambar dari https://loremflickr.com/320/240/cat, serta display angka 1-28 yang menunjukkan telah download berapa gambar.
+
+b)
+```
+5 6-23/8 * * 0-5 /bin/bash /home/yaniarpe/revisi3.sh
+```
+Penjadwalan pada crontab. 5 untuk menit ke 05, 6-23/8 menunjukkan jam tiap hari per 8 jam, dan terakhir 0-5 menunjukkan hari Minggu – Jumat.
+
+c)
+```
+grep "Location" $dir/wget.log > location.log
+cat wget.log >> wget.log.bak
+```
+Menggunakan wget.log untuk membuat location.log yang isinya merupakan hasil dari grep "Location". Kemudian append wget.log ke file back upnya
+
+```
+arrdup=($(awk 'BEGIN { FS="[/ ]" } a[$5]++  { print NR }' location.log))
+len=${#arrdup[@]}
+for ((i=0; i<$len; i=i+1))
+do
+  mv -f $dir/downloads/pdkt_kusuma_${arrdup[i]} $dir/duplicate/duplicate_$i
+done
+```
+
+Menggunakan AWK untuk mencari gambar yang sama yang telah didownload dengan membandingkan kolom $5 yang merupakan nama file, lalu print nomor barisnya saja (NR) lalu disimpan ke variabel array “arrdup”. Variabel len merupakan nilai untuk Panjang array. Sehingga bias dilakukan looping sepanjang array arrdup untuk memindahkan file-file gambar yang berduplikat ke folder duplicate dan memberi nama dengan format duplicate_nomor.
+
+```
+for j in $(ls $dir/downloads)
+do
+  mv $dir/downloads/$j $dir/kenangan/kenangan_$((k++))
+done
+```
+
+Melakukan looping sebanyak jumlah file pada folder downloads yaitu yang berisi sisa gambar yang sudah tidak berduplikat, dipindahkan seluruhnya ke folder kenangan dan diberi nama dengan format kenangan_nomor.
